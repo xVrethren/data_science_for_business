@@ -1,0 +1,149 @@
+---
+title: "BUSN 5000 :: Fall 2023"
+subtitle: Assignment 0 
+author: "Jordon, Griffin"
+output:
+  html_document:
+    self_contained: yes
+    toc: true
+    number_sections: true
+    theme: readable
+  pdf_document: default
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+# Attach packages
+library(tidyverse)     # To use the tidy packages
+library(modelsummary)  # To make pretty tables
+library(wooldridge)    # To load data needed 
+
+# Set global options
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE)
+```
+
+```{asis, directions=TRUE}
+
+**Instructions and Guidance** 
+
+The `.Rmd` source for this document is the template for your Assignment 0 submission. Assignment 0 is two things: (1) a dry run through the project submission process and (2) a check on your knowledge of course policies. You must submit your completed project as a single PDF document, uploaded to eLC by **11:59p on Friday, August 25** using the filename `sectiontime_lastname_firstname_projectI.pdf` (e.g. `935_cornwell_chris_projectII.pdf`). 
+
+Do NOT alter the formatting code in this template.
+
+*When you first open the file*
+
+#. Insert your first and last name in `author` component of the `yaml` block on line 3.
+#. The `setup` chunk starting at line 15 indicates the packages required for this project. Install these packages into your local copy of R if you have not done so already.
+#. Sign the academic honesty statement. When you do, you are testifying that you have not worked with other students and your submission represents only your work.
+
+*When you are working in the file* 
+
+#. Answers requiring mathematical expressions can be handled by either typing them using markdown math code or inserting clear images of handwritten solutions.
+#. When answering coding questions, make sure your code text does not extend past column 80 in any chunk. Otherwise, the code will not appear in the knitted PDF submission and cannot be graded. 
+#. Information on variables contained in datasets obtained from installed packages can be found through the Help tab in the Plot pane of RStudio. 
+#. **Be sure to fully answer all questions completely and follow the required length of each answer provided, be sure to follow when mathematical expressions or equations are asked for.**
+
+*If you get stuck*
+
+#. Consult [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/).
+#. Contact a course TA for explanations of course material or assistance with R and RStudio. 
+
+*Knitting and submission*
+
+#. Set `eval = TRUE` in all code chunks.  
+#. Remove these instructions before knitting the final PDF file you submit.
+#. Follow the instructions on eLC for "How to Submit Your Project" to see how to knit to HTML and save as PDF. 
+#. As explained in the syllabus, you submission must include a signed academic honesty statement, a PDF with all of your work to be graded, and the `.Rmd` that generates your PDF. If your submission is missing any of these components, it will be incomplete and receive a score of zero. 
+
+***
+```
+
+# Academic Honesty Statement
+
+**Academic honesty statement**: I have been academically honest in all of my work and will not tolerate academic dishonesty of others, consistent with [UGA's Academic Honesty Policy](https://honesty.uga.edu/Academic-Honesty-Policy/).
+
+Type your name below to sign the academic honesty statement, without signing it, your submission will not be graded. This also acknowledges that you understand you must submit a **pdf** with your signature and completed answers to recieve credit. 
+
+**Signature**: 
+
+Jordon Griffin
+
+# Syllabus Check 
+
+#. All questions about course administration and assessment should first be directed to 
+
+   * Chris Cornwell
+  
+   * Abbi Cormier
+   
+   * Morgan Kearns
+  
+   * Terry Analytics Lab 
+
+   **Answer: Abbi Cormier**
+
+#. Your first stop for help with course assignments and coding assistance should be
+
+   * Chris Cornwell
+  
+   * Abbi Cormier
+   
+   * Morgan Kearns
+   
+   * Terry Analytics Lab 
+
+   **Answer: Terry Analytics Lab**
+   
+#. Weekly recitation sesssions will be led by
+
+   * Chris Cornwell
+  
+   * Abbi Cormier
+   
+   * Morgan Kearns
+   
+   * Terry Analytics Lab 
+
+   **Answer: Morgan Kearns**
+   
+#. True or False: If you are absent, you can still participate in the Daily. 
+
+   **Answer: False**
+   
+#. True or False: Late homework submissions will not be accepted. 
+
+   **Answer: True**
+
+#. True or False: I can take the second exam on either Dec 7 or Dec 12, whichever I prefer. 
+
+   **Answer: False**
+
+#. True or False: My grade will be based on my rank in the class in terms overall performance.
+
+   **Answer: False**
+
+#. In class, mobile phones must be turned off and _______ .
+
+   **Answer: stowed away**
+   
+#. The workhorse of data science is the _______ .
+
+   **Answer: conditional expectation function (CEF)**
+
+# A simple R task: enter the code prescribed by the comments in the "chunk".
+
+```{r}
+#Assign 60000 to an object called `earnings`
+earnings <- 60000
+
+#Use the `log()` function to compute the (natural) log of `earnings` and assign the value to an object called `learnings`
+learnings <- log(earnings)
+
+#Use the `exp()` function to compute `exp(learnings)`.
+exp(learnings)
+
+```
+
+# Submission
+
+Submit this assignment underneath the Assignments tab in eLC, no later than Friday, August 25th at 11:59pm. Until we receive this assignment correctly, you will not receive any further grades in the course. 
