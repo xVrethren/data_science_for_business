@@ -1,0 +1,51 @@
+---
+title: "hw1"
+author: "jordon griffin"
+date: "2023-08-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(wooldridge)
+data(card)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+library(skimr)
+skim(card)
+
+```
+```{r}
+# Calculate the percentage of missing IQ scores directly
+missing_iq_percentage <- sum(is.na(card$IQ)) / nrow(card) * 100
+
+# Print the result
+print(missing_iq_percentage)
+
+
+```
+
+```{r}
+# Calculate the percentage of the sample that is black
+black_percentage <- sum(card$black) / nrow(card) * 100
+
+# Print the result
+print(black_percentage)
+
+```
+
+```{r}
+memory_size <- object.size(card)
+print(memory_size)
+memory_size_mb <- as.numeric(memory_size) / (1024^2)
+print(memory_size_mb)
+
+```
+
