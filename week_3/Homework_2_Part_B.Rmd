@@ -1,0 +1,212 @@
+---
+title: "homework 2 part b"
+author: "jordon griffin"
+date: "2023-08-31"
+output: html_document
+---
+# 1
+```{r}
+# Load necessary library
+library(readxl)
+
+# Read the dataset
+cps_data <- read_excel("week_3/cps09mar.xlsx")
+
+# Get the minimum values for 'hours' and 'week'
+min_hours <- min(cps_data$hours, na.rm = TRUE)
+min_weeks <- min(cps_data$week, na.rm = TRUE)
+
+# Print the results
+cat("Minimum hours per week:", min_hours, "\n")
+cat("Minimum weeks during the past year:", min_weeks, "\n")
+
+```
+# 2
+```{r}
+# Load necessary library
+library(readxl)
+
+# Read the dataset
+cps_data <- read_excel("week_3/cps09mar.xlsx")
+
+# Get the number of observations and variables
+num_observations <- nrow(cps_data)
+num_variables <- ncol(cps_data)
+
+# Print the results
+cat("Number of observations:", num_observations, "\n")
+cat("Number of variables:", num_variables, "\n")
+```
+
+# 3
+```{r}
+# Load necessary library
+library(readxl)
+
+# Read the dataset
+cps_data <- read_excel("week_3/cps09mar.xlsx")
+
+# Get the maximum value for 'age'
+max_age <- max(cps_data$age, na.rm = TRUE)
+
+# Count the occurrences of the maximum value
+count_max_age <- table(cps_data$age)[as.character(max_age)]
+
+# Print the results
+cat("Maximum age:", max_age, "\n")
+cat("Count of maximum age:", count_max_age, "\n")
+
+```
+
+# 4
+```{r}
+# Load necessary library
+library(readxl)
+
+# Read the dataset
+cps_data <- read_excel("week_3/cps09mar.xlsx")
+
+# Get the number of unique categories in the 'race' variable
+num_categories <- length(unique(cps_data$race))
+
+# Get the counts for each value in the 'race' variable
+race_value_counts <- table(cps_data$race)
+
+# Print the results
+cat("Number of unique categories in 'race':", num_categories, "\n")
+# Count the number of individuals identified as "Asian only" (where the value in 'race' column is 4)
+asian_only_count_R <- sum(cps_data$race == 4)
+
+# Print the result
+cat("Number of 'Asian only' individuals:", asian_only_count_R, "\n")
+```
+
+# 5
+```{r}
+# Calculate the percentage of all men and women in the dataset who earn at least $100,000
+percentage_all_men_high_earners <- (nrow(subset(cps_data, female == 0 & earnings >= 100000)) / nrow(subset(cps_data, female == 0))) * 100
+percentage_all_women_high_earners <- (nrow(subset(cps_data, female == 1 & earnings >= 100000)) / nrow(subset(cps_data, female == 1))) * 100
+
+# Compute the difference in these percentages
+percentage_difference_corrected_R <- percentage_all_men_high_earners - percentage_all_women_high_earners
+
+# Print the result
+cat("Corrected difference in percentage points:", round(percentage_difference_corrected_R), "\n")
+
+```
+
+# 6
+```{r}
+# Calculate average earnings for men and women
+avg_earnings_men_R <- mean(subset(cps_data, female == 0)$earnings, na.rm = TRUE)
+avg_earnings_women_R <- mean(subset(cps_data, female == 1)$earnings, na.rm = TRUE)
+
+# Compute the earnings gap in dollars
+earnings_gap_R <- avg_earnings_men_R - avg_earnings_women_R
+
+# Round the earnings gap to the nearest thousand
+rounded_earnings_gap_R <- round(earnings_gap_R, -3)
+
+# Calculate the percentage earnings gap and round it to the nearest integer
+percentage_gap_R <- round((earnings_gap_R / avg_earnings_women_R) * 100)
+
+# Print the results
+cat("Rounded earnings gap in dollars:", rounded_earnings_gap_R, "\n")
+cat("Percentage earnings gap:", percentage_gap_R, "%\n")
+
+```
+
+```{r}
+cps09mar_2534 <- cps_data %>%
+  filter(age <= 34,
+         age >= 25)
+
+cps09mar_2534 <- cps09mar_2534 %>%
+  mutate(gender = case_when(female == 1 ~ "Female",
+                           female == 0 ~ "Male"))
+
+earnings_dist_fvm <- ggplot(cps09mar_2534, 
+                            aes(x=earnings, group = gender, fill = gender)) + 
+  geom_density(adjust=1.5, alpha = 0.4) +
+  labs(title="Distribution of earnings by gender")
+earnings_dist_fvm 
+```
+
+```{r}
+# Calculate average earnings for male and female workers aged 25-34
+avg_earnings_male_2534 <- mean(subset(cps09mar_2534, gender == "Male")$earnings, na.rm = TRUE)
+avg_earnings_female_2534 <- mean(subset(cps09mar_2534, gender == "Female")$earnings, na.rm = TRUE)
+
+# Compute the earnings gap for 25-34 year-olds
+earnings_gap_2534 <- avg_earnings_male_2534 - avg_earnings_female_2534
+
+# Round the earnings gap to the nearest hundred
+rounded_earnings_gap_2534 <- round(earnings_gap_2534, -2)
+
+# Calculate the difference in earnings gap compared to all workers
+# Assuming 'earnings_gap_all' is the variable storing the earnings gap for all workers
+difference_gap <- earnings_gap_all - rounded_earnings_gap_2534
+
+rounded_earnings_gap_2534, difference_gap
+
+```
+# 8
+```{r}
+# Load the necessary library
+library(dplyr)
+
+# Calculate average earnings for male and female workers for the entire dataset
+avg_earnings_male_all <- mean(subset(cps_data, female == 0)$earnings, na.rm = TRUE)
+avg_earnings_female_all <- mean(subset(cps_data, female == 1)$earnings, na.rm = TRUE)
+
+# Compute the earnings gap for all workers
+dollar_gap_all <- avg_earnings_male_all - avg_earnings_female_all
+
+# Print the result
+cat("Earnings Gap for All Workers:", dollar_gap_all, "\n")
+
+# Calculate average earnings for male and female workers aged 25-34 and for all workers
+avg_earnings_female_2534 <- mean(subset(cps09mar_2534, female == 1)$earnings, na.rm = TRUE)
+avg_earnings_female_all <- mean(subset(cps_data, female == 1)$earnings, na.rm = TRUE)
+
+# Calculate the percentage earnings gap for 25-34 year-olds
+percent_gap_2534 <- (earnings_gap_2534 / avg_earnings_female_2534) * 100
+
+# Calculate the percentage earnings gap for all workers
+percent_gap_all <- (dollar_gap_all / avg_earnings_female_all) * 100
+
+# Calculate the difference in percentage gaps
+difference_percent_gap <- percent_gap_all - percent_gap_2534
+
+# Print the results
+cat("Percentage Earnings Gap (25-34 year-olds):", round(percent_gap_2534), "%\n")
+cat("Percentage Earnings Gap (All workers):", round(percent_gap_all), "%\n")
+cat("Difference in Percentage Gaps:", round(difference_percent_gap), "percentage points\n")
+
+```
+
+# 9
+```{r}
+# Using dplyr for data manipulation
+library(dplyr)
+
+# Calculate the proportion of males aged 25-34 who earn at least $100,000
+prop_males_100k_2534 <- cps09mar_2534 %>% 
+  filter(female == 0) %>% 
+  summarise(proportion = mean(earnings >= 100000, na.rm = TRUE))
+
+# Calculate the proportion of females aged 25-34 who earn at least $100,000
+prop_females_100k_2534 <- cps09mar_2534 %>% 
+  filter(female == 1) %>% 
+  summarise(proportion = mean(earnings >= 100000, na.rm = TRUE))
+
+# Compute the gender gap in percentage points
+gender_gap_100k_2534 <- (prop_males_100k_2534$proportion - prop_females_100k_2534$proportion) * 100
+
+# Round to 2 decimal places
+rounded_gender_gap_100k_2534 <- round(gender_gap_100k_2534, 2)
+
+# Print the result
+cat("Gender Gap (25-34 year-olds earning at least $100,000):", rounded_gender_gap_100k_2534, "percentage points\n")
+
+```
