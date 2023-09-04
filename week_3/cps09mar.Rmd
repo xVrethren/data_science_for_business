@@ -1,0 +1,123 @@
+---
+title: "cps09mar"
+author: "jordon griffin"
+date: "2023-08-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(tidyverse)
+```
+
+## Visualizing the earnings distribution
+
+There is no ready-made earnings variable in the CPS. What we are using
+is a combination of several variables depending on, among other things,
+whether the worker was salaried or paid hourly.
+Let’s create a histogram of the constructed earnings variable.
+```{r}
+cps_mar <- read_xlsx("week_3/cps09mar.xlsx")
+earnings_dist <- ggplot(cps_mar, aes(x=earnings)) +
+geom_histogram(aes(y = ..density..), color=1,
+fill="white", bins=50) +
+labs(title="Figure 1. Distribution of earnings, March 2009 CPS")
+print(earnings_dist)
+```
+
+```{r}
+mean(cps_mar$earnings)
+median(cps_mar$earnings)
+```
+
+```{r}
+ggplot(cps_mar, aes(age)) + geom_bar() +
+    labs(title="Figure 2. Age distribution, March 2009 CPS")
+```
+## Relative frequency in the limit
+
+If the formal definition is not your thing, let’s try simulating the idea. Say the event A is
+“Heads” in coin flip, so that SN is the number of heads you get from N flips of a fair
+coin. We’ll simulate 1000 random trials (flips) of a fair (P(Heads) = p = .5) coin, and
+plot the path of the cumulative proportion of heads.
+```{r}
+# set.seed(12345)
+N = 1000
+p = .5
+flips = sample(x=c(0,1), prob = c(1-p,p), size=N, replace=T)
+S_N = cumsum(flips)
+N = 1:N
+prop_S = S_N/N
+
+flip_data <- data.frame(run=1:1000, prop=prop_S)
+flip_plot <- ggplot(flip_data, aes(x=run, y=prop, frame=run)) +
+    geom_path(aes(cumulative=T), color="red") +
+    xlim(1,1000) + ylim(0.0,1.0) +
+    geom_hline(yintercept = 0.5) +
+    labs(title="Figure 1. Flipping a fair coin") +
+    ylab("Proportion of Heads") +
+    xlab("Number of Flips")
+print(flip_plot)
+```
+What is the likelihood of earning $100,000? How can we use the CPS to
+infer the answer? One way is to estimate the likelihood by the share of
+respondents with incomes greater than or equal to $100,00
+```{r}
+six_figs <- subset(cps_mar, earnings >= 100000)
+six_figs_shr <- nrow(six_figs)/nrow(cps_mar)
+print(six_figs_shr)
+```
+
+```{r}
+earnings_lnorm <- ggplot(cps_mar, aes(earnings)) +
+    geom_histogram(aes(y = after_stat(density)), color=1,
+        fill="white", bins=50) +
+    stat_function(fun = dlnorm,
+        args = list(meanlog = mean(log(cps_mar$earnings)),
+            sdlog = sd(log(cps_mar$earnings))),
+        colour = "red") +
+labs(title="Figure 2. Wage histogram with lognormal overlay")
+print(earnings_lnorm)
+```
+
+```{r}
+1-plnorm(100000, meanlog =
+    mean(log(cps_mar$earnings)), sdlog = sd(log(cps_mar$earnings)))
+```
+
+```{r}
+ggplot(cps_mar, aes(x = earnings, y = log(earnings))) +
+    geom_point() +
+    ggtitle("Relationship between earnings and log earnings") +
+    xlab("Earnings") +
+    ylab("Log Earnings") +
+    geom_segment(aes(x = 0, y = log(100000),
+            xend = 100000, yend = log(100000)),
+        color = "red", linetype = "dashed") +
+    geom_segment(aes(x = 100000, y = 0,
+            xend = 100000, yend = log(100000)),
+        color = "red", linetype = "dashed") +
+    scale_x_continuous(breaks = c(0, 100000), labels = c(0, 100000)) +
+    scale_y_continuous(breaks = c(0, log(100000)),
+            labels = c(0, round(log(100000), 2)))
+```
+
+# Percentage changes
+```{r}
+y1 <- 105000 # Earnings this year
+y0 <- 100000 # Earnings last year
+pct_raise_actual <- ((y1-y0)/y0)*100
+pct_raise_diflog <- (log(y1)-log(y0))*100
+print(paste("Actual percentage raise =", pct_raise_actual))
+print(paste("Approx percentage raise =", pct_raise_diflog))
+```
+
+# Earning six figures, women vs men
+
+```{r}
+six_figs_fvm <- cps_mar %>%
+group_by(gender) %>%
+summarise(six_figs_shrs = mean(earnings >= 100000))
+print(six_figs_fvm)
+```

@@ -1,0 +1,40 @@
+# Notes for Week 3
+```{r}
+library(tidyverse)
+# i need to read cps09mar.xlsx
+cps_mar <- read_excel("cps09mar.xlsx")
+
+```
+probability 
+
+v
+
+data observations
+- histograms (model?)
+- avg earnings = 1/N(sum(earnings)) sum of all earnings divided by sample size
+
+v
+
+infer
+
+v
+
+DGP
+- distribution functions
+- "features" -> f(earnings)
+- estiment E(earnings)
+
+# Frequentism
+
+# Law of large numbers
+
+```{r}
+six_figs <- subset(cps_mar, earnings >= 100000)
+six_figs_shr <- nrow(six_figs) / nrow(cps_mar)
+print(six_figs_shr)
+```
+
+
+
+
+
