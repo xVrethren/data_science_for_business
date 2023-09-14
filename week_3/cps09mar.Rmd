@@ -121,3 +121,88 @@ group_by(gender) %>%
 summarise(six_figs_shrs = mean(earnings >= 100000))
 print(six_figs_fvm)
 ```
+
+```{r}
+library(magrittr)
+library(dplyr)
+cps_mar_2362 <- cps_mar %>%
+filter(age >= 23,
+age <= 62)
+```
+
+```{r}
+print(paste("Average earnings =" , round(mean(cps_mar_2362$earnings),2)))
+print(paste("SD of earnings =" , round(sqrt(var(cps_mar_2362$earnings)),2)))
+print(paste("Average age =" , round(mean(cps_mar_2362$age),2)))
+print(paste("SD of age =" , round(sqrt(var(cps_mar_2362$age)),2)))
+print(paste("Correlation between earnings & age =" , (round(cor(cps_mar_2362$earnings, cps_mar_2362$age),2))))
+```
+
+```{r datasummary}
+library(modelsummary)
+datasummary(
+earnings + age ~ N + Mean + SD,
+data=cps_mar_2362,
+title="Earnings and age summary statistics")
+```
+
+```{r estimating the CEF}
+cef <- cps_mar_2362 %>%
+group_by(age) %>%
+summarise (
+earnings = mean(earnings)
+)
+print(cef)
+```
+
+```{r plot CEF}
+# E(earnings | age = 24) - E(earnings | age = 23)
+cef_earn_age <- ggplot(data = cef, aes(x=age, y=earnings)) +
+geom_line() +
+geom_point() +
+geom_text(
+data = cef,
+aes(
+label = ifelse(age==23|age==24,
+round(earnings, 0), '')
+),
+hjust=0, nudge_y = 1000, color = "red"
+)
+cef_earn_age
+```
+
+```{r add quadratic fit}
+library(ggpmisc)
+formula <- y~poly(x,2, raw=TRUE)
+quad_fit <- cef_earn_age +
+geom_smooth(
+formula=formula,
+method="lm", se=FALSE, color="red") +
+stat_poly_eq(
+mapping = use_label(c("eq","R2")),
+formula=formula, color = "red")
+quad_fit
+```
+
+```{r}
+cps_mar_2362 <- cps_mar_2362 %>%
+mutate(learnings = log(earnings))
+cef_log <- cps_mar_2362 %>%
+mutate(age = age-23) %>% # Center on age=23
+group_by(age) %>%
+summarise (
+learnings = mean(learnings)
+)
+cef_log
+```
+
+```{r the fitted quadratic model says that the returns to experience evolve like this}
+poly2 <- lm(learnings ~ age + I(age**2), cef_log)
+bhat <- coef(poly2)
+cef_log$dlearn_dage <- bhat["age"] +
+2*bhat["I(ageˆ2)"]*(cef_log$age)
+head(cef_log$dlearn_dage, n=5)
+```
+
+# Gender differences in career earnings
+

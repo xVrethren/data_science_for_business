@@ -1,0 +1,59 @@
+```{r slide 9}
+
+# Load the libraries
+library(readxl)
+library(tidyverse)
+library(modelsummary)
+# Load the library for datasummary once you have identified it
+
+cps_mar <- read_xlsx("./week_3/cps09mar.xlsx")
+cps_mar_2362 <- cps_mar %>%
+                filter(age >= 23, age <= 62)
+datasummary(
+    earnings + age ~ N + Mean + SD,
+    data = cps_mar_2362,
+    title = "Earnings and age summary statistics, 23-62 year-olds")
+
+```
+
+```{r log earnings dist}
+cps_mar_2362 <- cps_mar_2362 %>%
+                mutate(log_earnings = log(earnings))
+
+ggplot(data = cps_mar_2362, aes(x = log_earnings)) +
+  geom_histogram(binwidth = 0.5, fill = "blue", alpha = 0.5) +
+  labs(title = "Log Earnings Distribution", 
+       x = "Log Earnings", 
+       y = "Frequency") +
+  theme_minimal()
+
+```
+
+```{r}
+
+# Initialize parameters
+n_trials <- 1000 # Number of Monte Carlo trials for each sample size
+sample_sizes <- c(10, 30, 50, 100, 300, 500, 1000) # Different sample sizes to consider
+# true_mean <- 0 # True mean of the normal distribution
+true_mean <- 1 # True mean of the chi-sq distribution
+# Initialize an empty data frame to store results
+results <- data.frame(sample_size = integer(), sample_mean = numeric())
+# Perform Monte Carlo simulation
+for (n in sample_sizes) {
+for (i in 1:n_trials) {
+# sample_data <- rnorm(n, mean = true_mean, sd = 1) # Generate a sample
+sample_data <- rchisq(n, 1) # Generate a sample from Chi-square distribution
+sample_mean <- mean(sample_data) # Calculate sample mean
+# Append to results data frame
+results <- rbind(results, data.frame(sample_size = n, sample_mean = sample_mean))
+}
+}
+# Plot the results
+lln <- ggplot(results, aes(x = sample_size, y = sample_mean)) +
+geom_point(alpha = 0.2) +
+geom_hline(yintercept = true_mean, color = "red", size = 1) +
+ggtitle("Figure 5. Monte Carlo Demonstration of the Law of Large Numbers") +
+xlab("Sample Size") +
+ylab("Sample Mean") +
+theme_minimal()
+```

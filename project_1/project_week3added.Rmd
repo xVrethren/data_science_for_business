@@ -1,0 +1,419 @@
+---
+title: "BUSN 5000 :: Project I"
+subtitle: Exploring Earnings Differences between Women and Men 
+author: "Jordon, Griffin"
+output:
+  html_document:
+    self_contained: yes
+    toc: true
+#    number_sections: true
+    theme: readable
+#  pdf_document: default
+urlcolor: blue
+---
+
+```{r setup, include=TRUE}
+# Attach packages
+library(tidyverse)     # To use the tidy packages
+library(modelsummary)  # To make pretty tables
+library(here)          # To reference relative file paths
+library(ggpmisc)       # To add estimated model annotations
+
+# Set global options
+knitr::opts_chunk$set(
+  eval=TRUE,
+  echo = TRUE, 
+  warning = FALSE,
+  message = FALSE
+  )
+
+# Turn off scientific notation
+options(scipen=999)
+
+```
+
+### Preliminaries
+
+#### Academic honesty statement
+
+I have been academically honest in all of my work and will not tolerate academic dishonesty of others, consistent with [UGA's Academic Honesty Policy](https://honesty.uga.edu/Academic-Honesty-Policy/).
+
+Sign the academic honesty statement by typing your name on the **Signature** line. 
+
+**Signature**: 
+
+We will not accept submissions that omit a signed Academic Honesty statement. 
+
+#### Setting things up 
+
+Before you begin work on this assignment, you should create a new R Project in a selected directory on your computer and adopt the file structure we have promoted in class. We have posted a video on eLC to guide you in this process. 
+
+The `setup` chunk beginning on line 15 lists the packages required for the project. Make sure you have installed them before you begin.
+
+### Instructions and guidance
+
+#### Submission
+
+The `.Rmd` source for this document will be the template for your project submission. Insert your first and last name in `author` component  in line 3 of the `yaml` block. Submit your completed project document as a single PDF. Uploading the PDF to eLC by **1159p on Monday, Oct 2** using the filename `sectiontime_lastname_firstname_projectI.pdf` (e.g. `935_cornwell_chris_projectI.pdf`). 
+
+#### Code chunk evaluation
+
+Each code chunk has some missing elements that you are directed to add. The default setting for `eval= ` is `FALSE` so that you can incrementally turn on the evaluation of code chunks as you complete them. Change `eval= ` to `TRUE` in the code chunk heading to turn evaluation on. When you have completed the entire assignment, all of the chunks should have been evaluated and their results displayed in the knitted output. 
+
+#### Your write-up
+
+Each section instructs you to explain or describe some task or output. Your content should be written exclusively between the green horizontal rules we have inserted into the template. Do *NOT* change the template.
+
+---
+
+### Introduction
+
+<span style="color:green"> 
+Provide a brief overview of the project, including: (1) what are you trying to learn about; (2) the data you are using to learn; and (3) a brief summary of your findings. Answer in 3-4 clear and concise sentences. 
+</span>
+
+<!----------------------------------------------------------------------------->
+<hr style="border: 1px solid green;">
+
+Do not edit the html formatting. Just delete these instructions and insert your content here. 
+
+<hr style="border: 1px solid green;">
+<!----------------------------------------------------------------------------->
+
+---
+
+### Data fundamentals
+
+
+#### March 2022 CPS
+
+<span style="color:green">
+Using the ASEC documentation posted on eLC, provide a brief description of the March 2022 CPS that includes: (1) a  description of the standard monthly CPS; (2) how many households are typically surveyed; (3) what additional information is collected in the ASEC. Answer in 3-4 clear and concise sentences.  
+</span>
+
+<!----------------------------------------------------------------------------->
+<hr style="border: 1px solid green;">
+
+Do not edit the html formatting. Just delete these instructions and insert your content here. 
+
+<hr style="border: 1px solid green;">
+<!----------------------------------------------------------------------------->
+
+```{r read_data, eval =FALSE}
+# Read extract created by cpsmar_t.R
+cpsmar_t <- read_csv(here("data", "cpsmar_t.csv")) 
+```
+
+#### March 2022 extract
+
+<span style="color:green">
+Explain the actions that you applied to the March 2022 survey in the R script `cpsmar_t.R`, including: (1) a summary of variables created; (2) variables selected; and (3) the number of observations. Answer in 3-4 clear and concise sentences.  
+</span>
+
+<!----------------------------------------------------------------------------->
+<hr style="border: 1px solid green;">
+
+Do not edit the html formatting. Just delete these instructions and insert your content here. 
+
+<hr style="border: 1px solid green;">
+<!----------------------------------------------------------------------------->
+
+--- 
+
+### Beginning to learn
+
+#### From extract to analysis sample
+
+<span style="color:green">
+Complete the the `btl1` code chunk by transforming earnings into log earnings and creating a character-valued gender variable.
+</span>
+
+```{r btl1, eval=FALSE}
+cpsmar_a <- cpsmar_t %>%
+  filter(age >= 23, 
+         age <= 62,
+         earnings>0
+         ) %>%
+  mutate(learnings = ,
+         gender = 
+         )
+```
+
+<span style="color:green">
+In 1-2 clear and concise sentences, describe the actions performed in `btl1`.  
+</span>
+
+<!----------------------------------------------------------------------------->
+<hr style="border: 1px solid green;">
+
+Do not edit the html formatting. Just delete these instructions and insert your content here. 
+
+<hr style="border: 1px solid green;">
+<!----------------------------------------------------------------------------->
+
+#### The baseline earnings distribution
+
+<span style="color:green">
+Complete the the `btl2` code chunk by selecting an appropriate `fun` value to model the histogram and providing your Figure 1 with an title.
+</span>
+
+```{r btl2, eval=FALSE}
+ggplot(cpsmar_a, aes(earnings)) + 
+  geom_histogram(
+    aes(y = after_stat(density)), color=1, 
+    fill="white", bins=50
+    ) +
+  stat_function(
+    fun = dlnorm, 
+    args = list(
+      meanlog = mean(log(cpsmar_a$earnings)), 
+      sdlog   = sd(log(cpsmar_a$earnings))
+      ), 
+    colour = "red"
+    ) +
+  labs(
+    title="Figure 1. ",
+    x="Earnings",
+    y="Density"
+    )
+```
+
+<span style="color:green">
+Describe Figure 1, distinguishing the histogram from the red curve overlay and interpreting its general shape. 
+</span>
+
+<!----------------------------------------------------------------------------->
+<hr style="border: 1px solid green;">
+
+Do not edit the html formatting. Just delete these instructions and insert your content here. 
+
+<hr style="border: 1px solid green;">
+<!----------------------------------------------------------------------------->
+
+#### Summary statistics on earnings, age and gender composition
+
+<span style="color:green">
+Complete the `btl3` code chunk by adding `female` to the list of variables and `Median` to the list of items to report, and adding a title to Table 1.
+</span>
+
+```{r btl3, eval=FALSE}
+datasummary(earnings + age ~ N + Mean,
+  data=cpsmar_a,
+  title="Table 1. ")
+```
+
+<span style="color:green">
+Describe the empirical facts reported in Table 1. Answer in 1-2 clear and concise sentences.
+</span>
+
+<!----------------------------------------------------------------------------->
+<hr style="border: 1px solid green;">
+
+Do not edit the html formatting. Just delete these instructions and insert your content here. 
+
+<hr style="border: 1px solid green;">
+<!----------------------------------------------------------------------------->
+
+#### Earnings distributions for women and men
+
+<span style="color:green">
+Complete the `btl4` code chunk, filling in the missing `aes` information and providing a title for Figure 2.
+</span>
+
+```{r btl4, eval = FALSE}
+ggplot(cpsmar_a, aes(x=_____, group = _____, fill = _____)) + 
+  geom_density(adjust=1.5, alpha = 0.4) +
+  labs(
+    title="Figure 2. ",
+    x="Earnings",
+    y="Density"
+    )
+```
+
+<span style="color:green">
+In 1-2 clear and concise sentences, describe the main takeaways from Figure 2.
+</span>
+
+<!----------------------------------------------------------------------------->
+<hr style="border: 1px solid green;">
+
+Do not edit the html formatting. Just delete these instructions and insert your content here. 
+
+<hr style="border: 1px solid green;">
+<!----------------------------------------------------------------------------->
+
+#### Summary statistics on earnings and age by gender
+
+<span style="color:green">
+Complete the `btl5` code chunk to create a table of summary statistics (sample size, mean, and median) for earnings and age by gender. Provide a title for Table 2.
+</span>
+
+```{r btl5, eval=FALSE}
+datasummary( ~ gender*(),
+  data=cpsmar_a,
+  title="Table 2. ")
+```
+
+<span style="color:green">
+Describe the empirical facts reported in Table 2 using 1-2 clear and concise sentences.
+</span>
+
+<!----------------------------------------------------------------------------->
+<hr style="border: 1px solid green;">
+
+Do not edit the html formatting. Just delete these instructions and insert your content here. 
+
+<hr style="border: 1px solid green;">
+<!----------------------------------------------------------------------------->
+
+--- 
+
+### Models for exploration
+
+#### Estimating the CEF, $E(earnings|age)$ 
+
+<span style="color:green">
+Complete the `mfe1` code chunk to estimate $E(earnings|age)$ using the analysis sample. "Center" age on 23. Print the 1st, 5th, 10th, ..., 30th estimated conditional mean.
+</span>
+
+```{r mfe1, eval=FALSE}
+cef <- cpsmar_a %>%
+  mutate(age=age- ) %>%
+  group_by( ) %>%
+  summarise(earnings_bar = mean( ))
+print(cef[c(1, 5, 10, , , 30), ])
+```
+
+<span style="color:green">
+Describe the shape of the estimated CEF and suggest a model for it. Use the printed estimated CEF values to explain how average earnings evolve over a typical career. Limit your response to 2-3 clear and concise sentences.
+</span>
+
+<!----------------------------------------------------------------------------->
+<hr style="border: 1px solid green;">
+
+Do not edit the html formatting. Just delete these instructions and insert your content here. 
+
+<hr style="border: 1px solid green;">
+<!----------------------------------------------------------------------------->
+
+#### Plotting and modeling the CEF 
+
+<span style="color:green">
+Complete the `mfe2` code chunk to plot $\hat{E}(earnings|age)$ with a fit of the model you suggested.
+</span>
+
+```{r mfe2, eval=FALSE}
+formula <- y~poly(x, , raw=TRUE)
+ggplot(data = cef, aes(x= , y= )) + 
+  geom_line() + 
+  geom_point() +
+  geom_smooth(
+    formula= , 
+    method="lm", 
+    se=FALSE, 
+    color="red"
+    ) +
+  stat_poly_eq(
+    mapping = use_label(c("eq")), 
+    formula= , color = "red"
+    ) +
+  labs(
+    title="Figure 3.  ",
+    x="Year",
+    y="Average earnings"
+    )
+```
+
+<span style="color:green">
+Use the fitted model to predict earnings in year 0, 14, and 29. Compare these predictions with the estimated conditional means you reported above in 1-2 clear and concise sentences.
+</span>
+
+<!----------------------------------------------------------------------------->
+<hr style="border: 1px solid green;">
+
+Do not edit the html formatting. Just delete these instructions and insert your content here. 
+
+<hr style="border: 1px solid green;">
+<!----------------------------------------------------------------------------->
+
+#### Gender gap in earnings over a career
+
+<span style="color:green">
+Complete the `mfe3` code chunk to estimate $E(earnings|age, gender)$ and plot the results with a fit of an appropriate model. (Note your work on `mfe2` should be helpful here.)
+</span>
+
+```{r mfe3, eval=FALSE}
+cef_fvm <- cpsmar_a %>%
+  mutate( ) %>%
+  group_by( ) %>%
+  summarise(earnings_bar = mean( ))
+
+formula <- y~poly(x, , raw=TRUE)
+ggplot(cef_fvm, aes( ,  ,  )) +
+  geom_point() +
+  geom_line() +
+  geom_smooth(
+    
+    
+    
+    
+    ) +
+  stat_poly_eq(
+    aes(label =  paste(stat(eq.label))), 
+    formula = formula,
+    parse = TRUE
+    ) +
+  labs(
+    title="Figure 5. Log earnings profiles by gender",
+    x="Year",
+    y="Average log earnings"
+    )
+```
+
+<span style="color:green">
+Describe how the fitted profiles differ and how the gender gap evolves over a typical career. Use the fitted models to compute the male-female ratio in predicted earnings in year 0, 14, 29. Limit your response to 2-3 clear and concise sentences.
+</span>
+
+<!----------------------------------------------------------------------------->
+<hr style="border: 1px solid green;">
+
+Do not edit the html formatting. Just delete these instructions and insert your content here. 
+
+<hr style="border: 1px solid green;">
+<!----------------------------------------------------------------------------->
+
+#### Plotting and fitting the percentage gender gap
+
+<span style="color:green">
+Complete the `mfe4` code chunk to plot the ratio of male to female earnings to show the how the percentage gap evolves over a typical career. Add a linear fit to the ratio plot.
+</span>
+
+```{r mfe4, eval=FALSE}
+males    <- filter(cef_fvm, gender == " ") 
+females  <- filter(cef_fvm, gender == " ")   
+df_ratio <- data.frame(age = males$age, 
+                       ratio = males$ /females$ )
+
+ggplot(df_ratio, aes(x =  , y =  )) +
+  geom_line() +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  stat_poly_eq(mapping = use_label(c("eq")), color = "blue") +
+  labs(
+    title="Male-female earnings ratio by age",
+    x="Year",
+    y="Male-female average earnings ratio"
+    )
+```
+
+<span style="color:green">
+Report the ratio at year 0 and its peak value along with the year it peaks.  Report the predicted gap in each of these years using the linear fit. According to the linear fit, explain by how much the gap is predicted to increase each year. Limit your response to 3-4 clear and concise sentences.
+</span>
+
+<!----------------------------------------------------------------------------->
+<hr style="border: 1px solid green;">
+
+Do not edit the html formatting. Just delete these instructions and insert your content here. 
+
+<hr style="border: 1px solid green;">
+<!----------------------------------------------------------------------------->

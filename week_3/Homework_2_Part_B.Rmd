@@ -184,7 +184,7 @@ cat("Percentage Earnings Gap (All workers):", round(percent_gap_all), "%\n")
 cat("Difference in Percentage Gaps:", round(difference_percent_gap), "percentage points\n")
 
 ```
-
+the __ relationship between age and earnings captured well by modeling earnings as a __ function of age
 # 9
 ```{r}
 # Using dplyr for data manipulation

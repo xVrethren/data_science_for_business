@@ -1,0 +1,47 @@
+```{r}
+library(readxl)
+library(tidyverse)
+cps_mar <- read_excel("./week_3/cps09mar.xlsx")
+
+cps_mar_2362 <- cps_mar %>%
+  filter(age >= 23,
+         age <= 62) %>%
+  mutate(gender = case_when(female == 1 ~ "Female",
+                            female == 0 ~ "Male"))
+cef_fvm <- cps_mar_2362 %>%
+  mutate(age = age - 23) %>%   # Center on age=23
+  group_by(age, gender) %>%
+  summarise(earnings = mean(earnings))
+
+library(ggplot2)
+options(scipen=999)
+ggplot(cef_fvm, aes(age, earnings, color=gender)) +
+  geom_point() +
+  geom_line() +  
+  ylab("Average earnings by age") +
+  labs(title="CEFs of earnings by gender")
+
+```
+
+```{r #7}
+library(dplyr)
+
+# Assuming you've already loaded the data and created the cef_fvm data frame as in your previous code
+
+# Separate the CEFs for males and females
+males <- filter(cef_fvm, gender == "Male")
+females <- filter(cef_fvm, gender == "Female")
+
+# Create the ratio data frame
+df_ratio <- data.frame(age = males$age, ratio = males$earnings/females$earnings)
+
+# Get the ratio at the beginning (age 23 which is centered to 0)
+beginning_ratio <- round(df_ratio$ratio[df_ratio$age == 0], 2)
+
+# Get the ratio at year 23 (age 46)
+year_23_ratio <- round(df_ratio$ratio[df_ratio$age == 23], 2)
+
+# Display the answers
+cat("The ratio begins at", beginning_ratio, ", rises to", year_23_ratio, "in year 23 (age 46), and then tapers off until the last year.")
+
+```
