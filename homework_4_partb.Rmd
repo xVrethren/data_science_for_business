@@ -1,0 +1,224 @@
+# Homework 4 Part B
+
+# # 1
+```{r include=FALSE}
+# Load necessary libraries
+library(tidyverse)
+library(modelsummary)
+library(readxl)
+```
+
+```{r}
+# Load the data
+cps_mar <- read_excel("./week_3/cps09mar.xlsx")
+```
+
+# # 2
+```{r}
+# Filter and transform the data
+cps_mar_2362 <- cps_mar %>%
+  filter(earnings > 0, age >= 23, age <= 62) %>%
+  mutate(
+    gender = ifelse(female == 1, "Female", "Male"),
+    wage = earnings / (hours * week),  # Updated wage calculation
+    lwage = log(wage),
+    over40 = ifelse(hours > 40, 1, 0),
+    CollDeg = ifelse(education >= 16, 1, 0)
+  )
+# Create a nice table
+datasummary(
+    wage + hours + over40 + CollDeg ~ gender * (N + Mean + SD),
+  data = cps_mar_2362,
+  title = "Table 1. Summary statistics by gender, 23-62 year-olds"
+)
+```
+
+```{r include=TRUE}
+# Calculate the percentage of women in the dataset
+percentage_women <- (sum(cps_mar_2362$gender == "Female") / nrow(cps_mar_2362)) * 100
+
+# Round to the nearest whole number
+percentage_women_rounded <- round(percentage_women)
+```
+
+```{r}
+# Display the answer with the question
+cat("Women comprise", percentage_women_rounded, "% of our sample of 23-62 year-olds.\n")
+```
+
+# # 3
+```{r}
+# Calculate the average hours worked per week by gender
+avg_hours_by_gender <- cps_mar_2362 %>%
+  group_by(gender) %>%
+  summarize(avg_hours = mean(hours, na.rm = TRUE))
+
+# Calculate the difference in average hours between men and women
+hours_difference <- avg_hours_by_gender$avg_hours[avg_hours_by_gender$gender == "Male"] - 
+                   avg_hours_by_gender$avg_hours[avg_hours_by_gender$gender == "Female"]
+
+# Round to two decimals
+hours_difference_rounded <- round(hours_difference, 2)
+
+# Display the answer with the question
+cat("Question 3: Men work on average", hours_difference_rounded, "more hours per week than women. (Report to two decimals.)\n")
+```
+
+# # 4
+```{r}
+# Calculate the average wage for men and women in the entire dataset
+avg_wage_by_gender <- tapply(cps_mar_2362$wage, cps_mar_2362$gender, mean)
+
+# Extract the average wages for men and women
+womens_wage <- avg_wage_by_gender["Female"]
+mens_wage <- avg_wage_by_gender["Male"]
+
+# Calculate the wage gap using the provided formula
+wage_gap_percentage <- ((mens_wage - womens_wage) / womens_wage) * 100
+
+# Display the result
+cat("The percentage wage gap is roughly", round(wage_gap_percentage, 0), "%.\n")
+```
+### I had trouble with this one because I was expressing the wage gape as a percentage of men's wages, when I should have been doing it the other way around.
+
+# # 6
+```{r}
+# Calculate the percentage of men and women who work more than 40 hours
+over40_by_gender <- cps_mar_2362 %>%
+  group_by(gender) %>%
+  summarize(percentage_over40 = mean(hours > 40, na.rm = TRUE) * 100)
+
+# Calculate the difference in percentages
+percentage_diff <- over40_by_gender$percentage_over40[over40_by_gender$gender == "Male"] - 
+                  over40_by_gender$percentage_over40[over40_by_gender$gender == "Female"]
+
+# Round to two decimals
+percentage_diff_rounded <- round(percentage_diff, 2)
+
+# Display the answer with the question
+cat("Men are", percentage_diff_rounded, "percentage points more likely to work more than 40 hours.\n")
+```
+
+# # 7
+```{r}
+# Calculate the percentage of men and women who have a college degree
+college_degree_by_gender <- cps_mar_2362 %>%
+  group_by(gender) %>%
+  summarize(percentage_college_degree = mean(education >= 16, na.rm = TRUE) * 100)
+
+# Calculate the difference in percentages
+percentage_diff_college_degree <- college_degree_by_gender$percentage_college_degree[college_degree_by_gender$gender == "Female"] - 
+                                 college_degree_by_gender$percentage_college_degree[college_degree_by_gender$gender == "Male"]
+
+# Round to two decimals
+percentage_diff_college_degree_rounded <- round(percentage_diff_college_degree, 2)
+
+# Display the answer with the question
+cat("Women are", percentage_diff_college_degree_rounded, "percentage points more likely to have a college degree.\n")
+```
+
+```{r}
+cps_mar_2330_coll40 <- cps_mar_2362 %>%
+  filter(
+    age>= 23 & age<= 30,
+    over40  == 1,
+    CollDeg == 1
+  ) 
+datasummary(
+   wage + hours + over40 + CollDeg ~ gender * (N + Mean + SD),
+  data=cps_mar_2330_coll40,
+  title="Table 2. Summary statistics, 23-30 year-olds with college degrees and working >40 hours"
+  )
+```
+# # 8
+```{r}
+# Count the total number of individuals in this group
+total_individuals <- nrow(cps_mar_2330_coll40)
+
+# Calculate the percentage of women in this group
+percentage_women <- (sum(cps_mar_2330_coll40$gender == "Female") / total_individuals) * 100
+
+# Round to the nearest whole number
+percentage_women_rounded <- round(percentage_women)
+
+# Display the answers
+cat("There are", total_individuals, "individuals in the sample of 23-30 year-olds with college degrees working more than 40 hours.\n")
+cat("Women comprise", percentage_women_rounded, "% (rounded to the nearest whole number) of this group.\n")
+```
+# # 9
+```{r}
+# Calculate the average hours worked by gender in the group
+avg_hours_by_gender <- cps_mar_2330_coll40 %>%
+  group_by(gender) %>%
+  summarize(avg_hours = mean(hours, na.rm = TRUE))
+
+# Compute the difference in hours between men and women
+hours_diff <- avg_hours_by_gender$avg_hours[avg_hours_by_gender$gender == "Male"] - 
+             avg_hours_by_gender$avg_hours[avg_hours_by_gender$gender == "Female"]
+
+# Split the difference into hours and minutes
+hours_diff_whole <- floor(hours_diff)
+minutes_diff <- round((hours_diff - hours_diff_whole) * 60)
+
+# Display the answers
+cat("Men in this group work on average", hours_diff_whole, "hours and", minutes_diff, "minutes per week more than women.\n")
+```
+# # 10
+```{r}
+# Calculate the average wage for men and women in the cps_mar_2330_coll40 dataset
+avg_wage_by_gender_2330_coll40 <- tapply(cps_mar_2330_coll40$wage, cps_mar_2330_coll40$gender, mean)
+
+# Extract the average wages for men and women
+womens_wage_2330_coll40 <- avg_wage_by_gender_2330_coll40["Female"]
+mens_wage_2330_coll40 <- avg_wage_by_gender_2330_coll40["Male"]
+
+# Calculate the wage gap using the provided formula
+wage_gap_percentage_2330_coll40 <- ((mens_wage_2330_coll40 - womens_wage_2330_coll40) / womens_wage_2330_coll40) * 100
+
+# Round to the nearest whole number
+rounded_wage_gap_percentage_2330_coll40 <- round(wage_gap_percentage_2330_coll40)
+
+# Display the result
+cat("Among the group documented in Table 2, the gender wage gap is roughly", rounded_wage_gap_percentage_2330_coll40, "%.\n")
+```
+
+```{r group_by}
+cef_2330_coll40 <- cps_mar_2330_coll40 %>%
+  mutate(age=age-23) %>%
+  group_by(age, gender) %>%
+  summarise(
+    lwage_bar =   mean(lwage, na.rm = TRUE),
+    lwage_se  =   sd(lwage, na.rm = TRUE)/sqrt(n()),
+    upper = lwage_bar  + lwage_se  *1.96,
+    lower = lwage_bar  - lwage_se  *1.96
+  )
+cef_2330_coll40
+```
+
+```{r}
+ggplot(cef_2330_coll40, aes(x = age, y = lwage_bar, color = gender)) +
+  geom_pointrange(aes(ymin = lower, ymax = upper)) +
+  labs(
+    title="Figure 1. Log wage profiles by gender, 23-30 year-olds, College, Over40",
+    x="Year",
+    y="Average log wage"
+    )
+    
+    # Filter the data for women
+women_data <- cef_2330_coll40 %>%
+  filter(gender == "Female")
+
+# Identify the minimum and maximum average log wages for women
+min_log_wage <- min(women_data$lwage_bar)
+max_log_wage <- max(women_data$lwage_bar)
+
+# Convert the log wages into dollar terms
+min_dollar_wage <- round(exp(min_log_wage), 3)
+max_dollar_wage <- round(exp(max_log_wage), 2)
+
+# Display the answers
+cat("For women in this group, average log wages rise from roughly", round(min_log_wage, 2), 
+    "to", round(max_log_wage, 2), ",\n or in dollar terms, roughly $", min_dollar_wage, 
+    "to $", max_dollar_wage, ". (All answers rounded to two decimal places.)\n")
+
+```
