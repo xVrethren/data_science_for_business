@@ -1,0 +1,143 @@
+# 1
+```{r}
+# Load the AER package
+library(AER)
+
+# Load the STAR data
+data("STAR")
+
+# Get the dimensions of the dataset
+dimensions <- dim(STAR)
+
+# Number of observations (rows)
+num_observations <- dimensions[1]
+
+# Number of variables (columns)
+num_variables <- dimensions[2]
+
+# Print the results
+print(paste("The data set has", num_observations, "observations and", num_variables, "variables."))
+
+```
+
+# 2
+```{r}
+# Load the AER package
+library(AER)
+
+# Load the STAR data
+data("STAR")
+
+# Calculate the number of students in each class type
+class_size <- table(STAR$stark)
+
+# Order the class types by size (smallest to largest)
+ordered_class_types <- names(sort(class_size))
+
+# Display the ordered class types
+cat("Class types in order of class size (smallest to largest):",
+    paste(ordered_class_types, collapse = ", "))
+
+```
+
+# 5
+```{r}
+# Load the libraries
+library(AER)
+library(dplyr)
+
+# Load the STAR dataset
+data("STAR")
+
+# Create the test score variables
+STAR2 <- STAR %>%
+  mutate(
+    scorek = readk + mathk, # create the kindergarten score variable
+    score1 = read1 + math1, # create the 1st grade score variable
+    score2 = read2 + math2, # create the 2nd grade score variable
+    score3 = read3 + math3  # create the 3rd grade score variable
+  )
+
+# View the modified dataset
+head(STAR2)
+    
+```
+
+```{r 5}
+# Load the necessary library
+library(AER)
+
+# Load the STAR dataset
+data("STAR")
+
+# Access the specific entries for the second observation
+gender_second_observation <- as.character(STAR$gender[2])
+birth_year_second_observation <- STAR$birth[2]
+class_type_second_grade_second_observation <- as.character(STAR$star2[2])
+
+# Print the statement with the accessed information
+cat("The second observation has the gender of", gender_second_observation, 
+    ", birth year of", birth_year_second_observation, 
+    ", and was in a", class_type_second_grade_second_observation, 
+    "type of class in the second grade.\n")
+```
+
+```{r}
+# Load the necessary libraries
+library(AER)
+library(dplyr)
+library(vtable)
+
+# Load the STAR dataset and create the score variables
+STAR2 <- STAR %>%
+  mutate(
+    scorek = readk + mathk,
+    score1 = read1 + math1,
+    score2 = read2 + math2,
+    score3 = read3 + math3
+  )
+
+# Produce summary statistics for each grade, grouped by class type
+st(STAR2, vars=c('scorek'), group='stark', 
+   title="Test scores by class type, Kindergarten grade")
+
+st(STAR2, vars=c('score1'), group='stark', 
+   title="Test scores by class type, 1st grade")
+
+st(STAR2, vars=c('score2'), group='stark', 
+   title="Test scores by class type, 2nd grade")
+
+st(STAR2, vars=c('score3'), group='stark', 
+   title="Test scores by class type, 3rd grade")
+
+```
+
+```{r}
+# Load the necessary libraries
+library(AER)
+library(dplyr)
+library(vtable)
+
+# Load the STAR dataset and create the score variable for Kindergarten
+STAR2 <- STAR %>%
+  mutate(
+    scorek = readk + mathk
+  )
+
+# Use the st() function to obtain summary statistics for regular and small classes
+summary_stats <- st(STAR2, vars = c("scorek"), group = "stark")
+
+# Extract the mean and standard deviation for regular and small classes
+mean_regular <- summary_stats$Mean[summary_stats$Group == "regular"]
+mean_small <- summary_stats$Mean[summary_stats$Group == "small"]
+sd_regular <- summary_stats$SD[summary_stats$Group == "regular"]
+
+# Calculate the difference in means and express it as a fraction of the standard deviation for regular classes
+diff_fraction <- (mean_small - mean_regular) / sd_regular
+
+# Convert the fraction to a percentage and round to the nearest decile
+diff_percentage <- round(diff_fraction * 100, digits = -1)
+
+# Print the result
+cat("The difference in average test scores between regular and small classes for kindergartners amounts to roughly", diff_percentage, "% of a regular-class standard deviation.\n")
+```

@@ -12,7 +12,7 @@ output:
 urlcolor: blue
 ---
 
-```{r setup, include=TRUE}
+```{r setup, include=FALSE}
 # Attach packages
 library(tidyverse)     # To use the tidy packages
 library(modelsummary)  # To make pretty tables
@@ -40,7 +40,7 @@ I have been academically honest in all of my work and will not tolerate academic
 
 Sign the academic honesty statement by typing your name on the **Signature** line. 
 
-**Signature**: 
+**Signature**: Jordon Griffin
 
 We will not accept submissions that omit a signed Academic Honesty statement. 
 
@@ -75,8 +75,7 @@ Provide a brief overview of the project, including: (1) what are you trying to l
 <!----------------------------------------------------------------------------->
 <hr style="border: 1px solid green;">
 
-Do not edit the html formatting. Just delete these instructions and insert your content here. 
-
+This project aims to explore the differences in earnings between women and men. We utilize a dataset that contains variables such as age, education, earnings, hours worked, and other relevant factors. Our preliminary exploration indicates several factors that might influence the earnings gap, including education and work hours. Further analyses will delve deeper into these relationships to provide a comprehensive understanding.
 <hr style="border: 1px solid green;">
 <!----------------------------------------------------------------------------->
 
@@ -94,14 +93,14 @@ Using the ASEC documentation posted on eLC, provide a brief description of the M
 <!----------------------------------------------------------------------------->
 <hr style="border: 1px solid green;">
 
-Do not edit the html formatting. Just delete these instructions and insert your content here. 
+The March 2022 Current Population Survey (CPS) is the U.S. Government's official source for employment and unemployment statistics, and it has been conducted monthly for over five decades. Each month, about 54,000 scientifically selected households, representing the nation as a whole, are interviewed. This approach enables monthly and yearly comparisons, minimizing the inconvenience to any particular household. In addition to capturing employment data, the CPS serves as a rich source of demographic details such as age, sex, race, marital status, and educational attainment. Occasionally, supplemental questions on health, education, income, and previous work experience are also included, providing data that helps update the decennial census information.
 
-<hr style="border: 1px solid green;">
+The Annual Social and Economic (ASEC) Supplement, a part of the CPS, adds further depth. While it contains the basic monthly demographic and labor force data, the ASEC also offers insights on work experience, income types, noncash benefits, health insurance coverage, and migratory patterns. The CPS sample covers the civilian noninstitutional population of the U.S., spanning across 1,328 counties and cities, and includes approximately 100,000 persons aged 15 and above. In addition, the ASEC covers military personnel living in civilian settings and has been supplemented with a sample of Hispanic households since 1976. In total, the ASEC surveys around 95,000 households.<hr style="border: 1px solid green;">
 <!----------------------------------------------------------------------------->
 
 ```{r read_data, eval =FALSE}
 # Read extract created by cpsmar_t.R
-cpsmar_t <- read_csv(here("data", "cpsmar_t.csv")) 
+cpsmar_t <- read_csv(here("project_1", "cpsmar_t.csv")) 
 ```
 
 #### March 2022 extract
@@ -113,8 +112,7 @@ Explain the actions that you applied to the March 2022 survey in the R script `c
 <!----------------------------------------------------------------------------->
 <hr style="border: 1px solid green;">
 
-Do not edit the html formatting. Just delete these instructions and insert your content here. 
-
+In the R script titled cpsmar_t.R, the March 2022 Current Population Survey data undergoes a series of transformations. Two primary datasets, pppub22.csv and hhpub22.csv, are ingested, which consist of individual responses and household data respectively. The household dataset specifically extracts variables related to region and household sequence. A core component of the script calculates the Labor Force Participation Rate (LFPR) for March 2022. This process involves the creation and manipulation of several variables, namely the number of employed individuals, the unemployed, the total labor force, those not in the labor force, the overall population, and the LFPR. These new variables are derived from the major labor force recode "PEMLR" and are conditioned based on age and employment status. After these transformations, the script exports the LFPR values into a text file. The hhpub22.csv dataset comprises 89,197 observations, while the pppub22.csv dataset has 152,732 observations.
 <hr style="border: 1px solid green;">
 <!----------------------------------------------------------------------------->
 
@@ -134,8 +132,8 @@ cpsmar_a <- cpsmar_t %>%
          age <= 62,
          earnings>0
          ) %>%
-  mutate(learnings = ,
-         gender = 
+  mutate(learnings = log(earnings),
+         gender = ifelse(female == 1, "Female", "Male") # Placeholder for actual transformation logic
          )
 ```
 

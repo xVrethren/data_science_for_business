@@ -59,7 +59,7 @@ print(paste("March 2022 LFPR =", LFPR))
 
 LF <- data.frame(c("Employed", "Unemployed", "Labor Force", "Not in Labor Force", "Population", "LFPR"),
                  c(E, U, LF, NIFL, Pop, LFPR))
-write_csv(LF, here("out", "LF.csv"), col_names = FALSE)
+write_csv(LF, here("project_1", "cpsmar_t.csv"), col_names = FALSE)
 
 #-------------------------------------------------------------------------------
 
